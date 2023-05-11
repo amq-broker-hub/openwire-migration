@@ -1,0 +1,57 @@
+= AMQP protocol
+
+AMQ Broker uses AMQP 1.0 (which is not compatible with AMQP v0.9.1).
+
+Pros
+
+* AMQP is a messaging standard
+* Clients exist for multiple languages, see https://qpid.apache.org/index.html[Apache Qpid]
+
+Cons
+
+* XA transactions are not supported
+
+== Clients
+
+AMQP clients:
+
+* AMQ Clients JMS (Qpid JMS)
+* AMQ .NET Client (AMQP.Net Lite)
+* Qpid Proton DotNet (recommended)
+* AMQ Clients Python 3.x (Qpid Proton)
+* AMQ Clients C++ (Qpid Proton)
+* AMQ JavaScript Client (Rhea)
+* AMQ Ruby Client (Qpid Proton)
+
+== Java client
+
+https://qpid.apache.org/components/jms/index.html[Qpid JMS client] has two builds. Pick the build based on the framework and other libraries you use in your app:
+
+* JMS 2 API (javax.jms): version 1.x
+* Jakarta API (jakarta.jms): version 2.x
+
+Jakarta API is used starting these version:
+
+* SpringBoot 3
+* Spring Framework 6
+* Quarkus 3
+* JBoss EAP 8
+* Apache Camel 4
+
+*Maven*
+
+To use the Red Hat build of the JMS client add dependency to _pom.xml_:
+
+[source,xml]
+```
+<dependency>
+    <groupId>org.apache.qpid</groupId>
+    <artifactId>qpid-jms-client</artifactId>
+    <version>1.7.0.redhat-00002</version>
+</dependency>
+```
+
+
+
+
+

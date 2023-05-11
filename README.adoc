@@ -1,0 +1,23 @@
+= Migrate from OpenWire protocol
+
+OpenWire is a legacy ActiveMQ wire protocol which is now deprecated in Red Hat AMQ 7 (ActiveMQ Artemis). Migrating the existing client applications to an alternative protocol requires code changes are regression testing.
+
+== Protocols
+
+Pick one of the alternative protocols supported by Artemis message broker:
+
+* link:core[CORE]
+* link:amqp[AMQP]
+
+Quick pick:
+
+* JBoss EAP apps -> use CORE
+* Java apps with XA transactions -> use CORE
+* .NET apps -> use AMQP
+* Prefer AMQP over CORE because that's a standard protocol
+
+== Clients
+
+Documentation: https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11
+
+Downloads: https://access.redhat.com/jbossnetwork/restricted/listSoftware.html?downloadType=distributions&product=jboss.amq.clients

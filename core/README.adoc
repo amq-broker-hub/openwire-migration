@@ -1,0 +1,27 @@
+= Core protocol
+
+Apache Artemis' own protocol.
+
+Pros
+
+* XA Transactions are supported
+* JBoss EAP has built-in support
+* Used for broker cluster internal communication, no message conversion is needed
+
+Cons
+
+* Not a standard. It's only supported by Apache Artemis.
+* Only Java client exist
+
+== Clients
+
+Core clients:
+
+* AMQ Core Protocol JMS Client
+* AMQ Clients Resource Adapter
+
+== JBoss EAP 
+
+JBoss EAP 7 supports Core messaging connections out of the box, see: https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.4/html-single/configuring_messaging/index#about_integrated_artemis_resource_adapter
+
+The related `artemis-ra` jar file can also be found in AMQ broker's `lib` directory.
