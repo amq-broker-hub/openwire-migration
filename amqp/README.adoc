@@ -67,7 +67,7 @@ To use the Red Hat build of the JMS client add dependency to _pom.xml_:
 The AMQP client supports JMS2 API, which is backward compatible with JMS1.1. Create `ConnectionFactory` as:
 
 ```
-org.apache.qpid.jms.JmsConnectionFactory connFactory = new JmsConnectionFactory(brokerUrl);
+javax.jms.ConnectionFactory connFactory = new org.apache.qpid.jms.JmsConnectionFactory(brokerUrl);
 ```
 
 == URL
