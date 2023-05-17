@@ -2,14 +2,19 @@
 
 AMQ Broker uses AMQP 1.0 (which is not compatible with AMQP v0.9.1).
 
-Pros
+*Pros*
 
 * AMQP is a messaging standard
 * Clients exist for multiple languages, see https://qpid.apache.org/index.html[Apache Qpid]
 
-Cons
+*Cons*
 
 * XA transactions are not supported
+
+*Notes*
+
+* AMQP protocol traditionally uses port `5672` for non-TLS and `5671` for TLS secured connections
+* With AMQ Broker we usually simply use port `61617` with TLS enabled
 
 == Clients
 
@@ -38,7 +43,13 @@ Jakarta API is used starting these version:
 * JBoss EAP 8
 * Apache Camel 4
 
-*Maven*
+=== Red Hat builds
+
+Doc: https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11/html-single/using_the_amq_jms_client/index
+Maven: https://maven.repository.redhat.com/earlyaccess/all/org/apache/qpid/qpid-jms-client/
+
+* Currently v1.x (javax.jms) builds are available
+* Last build for Java8 is `0.61.0.redhat-00001`, newer versions require Java11
 
 To use the Red Hat build of the JMS client add dependency to _pom.xml_:
 
@@ -51,6 +62,37 @@ To use the Red Hat build of the JMS client add dependency to _pom.xml_:
 </dependency>
 ```
 
+=== Code
+
+The AMQP client supports JMS2 API, which is backward compatible with JMS1.1. Create `ConnectionFactory` as:
+
+```
+org.apache.qpid.jms.JmsConnectionFactory connFactory = new JmsConnectionFactory(brokerUrl);
+```
+
+== URL
+
+AMQP protocol requires a different broker URL than Openwire. See URL format and https://qpid.apache.org/releases/qpid-jms-1.8.0/docs/index.html#jms-configuration-options[parameters]. Examples:
+
+* Simple non-TLS
++
+`amqp://host:5672`
+
+* TLS enabled server - trust every certificate
++
+`amqps://host:61617?transport.verifyHost=false&transport.trustAll=true`
+
+* TLS enabled server - truststores
++
+`amqps://host:61617?transport.trustStoreLocation=./client.ts&transport.trustStorePassword=changeit`
+
+* Prefetch size
++
+`amqp://localhost:5672?jms.prefetchPolicy.all=10`
+
+* Failover - OpenShift Routes
++
+`failover:(amqps://route-0.apps.mycluster.mycompany.com:443,amqps://route-1.apps.mycluster.mycompany.com:443)?failover.maxReconnectAttempts=15&failover.amqpOpenServerListAction=IGNORE`
 
 
 
