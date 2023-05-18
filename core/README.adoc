@@ -2,13 +2,13 @@
 
 Apache Artemis' own protocol.
 
-Pros
+*Pros*
 
 * XA Transactions are supported
 * JBoss EAP has built-in support
 * Used for broker cluster internal communication, no message conversion is needed
 
-Cons
+*Cons*
 
 * Not a standard. It's only supported by Apache Artemis.
 * Only Java client exist
@@ -18,10 +18,54 @@ Cons
 Core clients:
 
 * AMQ Core Protocol JMS Client
-* AMQ Clients Resource Adapter
+* AMQ Clients Resource Adapter for JBoss EAP
 
-== JBoss EAP 
+
+
+== Java client
+
+https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11/html-single/using_the_amq_core_protocol_jms_client/index[Core JMS Client] Red Hat builds:
+
+* JMS2 API (recommended): https://maven.repository.redhat.com/earlyaccess/all/org/apache/activemq/artemis-jms-client/[`artemis-jms-client`]
+* Jakarta API (for latest runtimes): https://maven.repository.redhat.com/earlyaccess/all/org/apache/activemq/artemis-jakarta-client/[`artemis-jakarta-client`]
+* Non-JMS compliant client: https://maven.repository.redhat.com/earlyaccess/all/org/apache/activemq/artemis-core-client/[`artemis-core-client`]
+
+GitHub: https://github.com/rh-messaging/activemq-artemis/tree/amq-broker-7.11/artemis-jms-client
+
+To use the Red Hat build of the JMS client add dependency to _pom.xml_ (in a non-JBossEAP apps):
+
+```
+<dependency>
+  <groupId>org.apache.activemq</groupId>
+  <artifactId>artemis-jms-client</artifactId>
+  <version>2.18.0.redhat-00021</version>
+</dependency>
+```
+
+Also make sure that _JMS 2.0_ API spec is used as dependency (instead of _JMS 1.1_):
+
+```
+<dependency>
+    <groupId>org.apache.geronimo.specs</groupId>
+    <artifactId>geronimo-jms_2.0_spec</artifactId>
+    <version>1.0.0.alpha-2-redhat-2</version>
+</dependency>
+```
+
+=== JBoss EAP 
 
 JBoss EAP 7 supports Core messaging connections out of the box, see: https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.4/html-single/configuring_messaging/index#about_integrated_artemis_resource_adapter
 
 The related `artemis-ra` jar file can also be found in AMQ broker's `lib` directory.
+
+=== Code
+
+The CORE client supports JMS2 API, which is backward compatible with JMS1.1. Create `ConnectionFactory` as:
+
+```
+javax.jms.ConnectionFactory connFactory = new org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory(brokerUrl);
+```
+
+== URL
+
+CORE protocol URL format and parameters: https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11/html-single/using_the_amq_core_protocol_jms_client/index#configuration_options

@@ -15,6 +15,7 @@ AMQ Broker uses AMQP 1.0 (which is not compatible with AMQP v0.9.1).
 
 * AMQP protocol traditionally uses port `5672` for non-TLS and `5671` for TLS secured connections
 * With AMQ Broker we usually simply use port `61617` with TLS enabled
+* It's possible to use AMQP in an app deployed on JBoss EAP as a custom jar added to the war
 
 == Clients
 
@@ -59,6 +60,16 @@ To use the Red Hat build of the JMS client add dependency to _pom.xml_:
     <groupId>org.apache.qpid</groupId>
     <artifactId>qpid-jms-client</artifactId>
     <version>1.7.0.redhat-00002</version>
+</dependency>
+```
+
+Also make sure that _JMS 2.0_ API spec is used as dependency (instead of _JMS 1.1_):
+
+```
+<dependency>
+    <groupId>org.apache.geronimo.specs</groupId>
+    <artifactId>geronimo-jms_2.0_spec</artifactId>
+    <version>1.0.0.alpha-2-redhat-2</version>
 </dependency>
 ```
 
