@@ -69,3 +69,29 @@ javax.jms.ConnectionFactory connFactory = new org.apache.activemq.artemis.jms.cl
 == URL
 
 CORE protocol URL format and parameters: https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11/html-single/using_the_amq_core_protocol_jms_client/index#configuration_options
+
+* Simple non-TLS
++
+`tcp://host:61616`
+
+* TLS enabled server - trust every certificate
++
+`tcp://host:61617?sslEnabled=true&verifyHost=false&trustAll=true`
+
+* TLS enabled server - truststore
++
+`tcp://host:61617?sslEnabled=true&trustStorePath=./client.ts&trustStorePassword=changeit`
+
+* Prefetch size bytes (default is 1MiB)
++
+`tcp://host:61617?consumerWindowSize=102400`
+
+* Failover - OpenShift Routes.
++
+(amqps://route-0.apps.mycluster.mycompany.com:443,amqps://route-1.apps.mycluster.mycompany.com:443)?ha=true&useTopologyForLoadBalancing=false
+// &connectionLoadBalancingPolicyClassName=org.apache.activemq.artemis.api.core.client.loadbalance.RandomStickyConnectionLoadBalancingPolicy
++
+The Core client can automatically receive information of other endpoints in the broker cluster. In this case it's enough to add only the hostname of one broker in the URL, it will propagate the hostnames of the other brokers in the cluster. This is not really useful on OpenShift where the broker doesn't know the hostname of the _Routes_ or _Services_ where the client can actually access the broker. To turn off this discovery feature add `useTopologyForLoadBalancing=false`, so the client will only try the hostnames listed in the connection URL. 
+// By default the client picks round-robin from the multiple hostnames listed for each connection it creates. See alternative strategies that can be set as `connectionLoadBalancingPolicyClassName`  https://activemq.apache.org/components/artemis/documentation/latest/clusters.html[Client-Side Load balancing] 
+
+

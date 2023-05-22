@@ -63,13 +63,18 @@ To use the Red Hat build of the JMS client add dependency to _pom.xml_:
 </dependency>
 ```
 
-Also make sure that _JMS 2.0_ API spec is used as dependency (instead of _JMS 1.1_):
+Also make sure that JavaEE API specs are added: _JSON_ and _JMS 2.0_ (instead of _JMS 1.1_):
 
 ```
 <dependency>
     <groupId>org.apache.geronimo.specs</groupId>
     <artifactId>geronimo-jms_2.0_spec</artifactId>
     <version>1.0.0.alpha-2-redhat-2</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.geronimo.specs</groupId>
+    <artifactId>geronimo-json_1.0_spec</artifactId>
+    <version>1.0.0.alpha-1-redhat-1</version>
 </dependency>
 ```
 
@@ -93,7 +98,7 @@ AMQP protocol requires a different broker URL than Openwire. See URL format and 
 +
 `amqps://host:61617?transport.verifyHost=false&transport.trustAll=true`
 
-* TLS enabled server - truststores
+* TLS enabled server - truststore
 +
 `amqps://host:61617?transport.trustStoreLocation=./client.ts&transport.trustStorePassword=changeit`
 
