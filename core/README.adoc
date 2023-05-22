@@ -86,13 +86,28 @@ CORE protocol URL format and parameters: https://access.redhat.com/documentation
 +
 `tcp://host:61617?consumerWindowSize=102400`
 
-* Failover - OpenShift Routes.
+* Enable reconnection
 +
-`(amqps://route-0.apps.mycluster.mycompany.com:443,amqps://route-1.apps.mycluster.mycompany.com:443)?ha=true&useTopologyForLoadBalancing=false`
+`tcp://host:61617?reconnectAttempts=-1`
+
+* Multiple brokers - OpenShift Routes.
 +
-The Core client can automatically receive information of other endpoints in the broker cluster. In this case it's enough to add only the hostname of one broker in the URL, it will propagate the hostnames of the other brokers in the cluster. This is not really useful on OpenShift where the broker doesn't know the hostname of the _Routes_ or _Services_ where the client can actually access the broker. To turn off this discovery feature add `useTopologyForLoadBalancing=false`, so the client will only try the hostnames listed in the connection URL. 
+`(amqps://route-0.apps.mycluster.mycompany.com:443,amqps://route-1.apps.mycluster.mycompany.com:443)?reconnectAttempts=-1&useTopologyForLoadBalancing=false`
++
+
 
 // &connectionLoadBalancingPolicyClassName=org.apache.activemq.artemis.api.core.client.loadbalance.RandomStickyConnectionLoadBalancingPolicy
 // By default the client picks round-robin from the multiple hostnames listed for each connection it creates. See alternative strategies that can be set as `connectionLoadBalancingPolicyClassName`  https://activemq.apache.org/components/artemis/documentation/latest/clusters.html[Client-Side Load balancing] 
 
 
+=== Failover
+
+Core client's automatic reconnection mechanism is different than OpenWire's:
+
+* Automatic reconnection is disabled by default, add `reconnectAttempts=-1` to enable unlimited retry. In this case no _Exception_ reaches the application code level.
+* When multiple brokers are listed in the url, the set of connections created by the application are evenly distributed between the listed brokers (instead of all connecting to the first available)
+// ** With `connectionLoadBalancingPolicyClassName=org.apache.activemq.artemis.api.core.client.loadbalance.RandomStickyConnectionLoadBalancingPolicy` the first connection goes to one broker than all the other connections to the other broker - bug(?) 
+* The Core client reconnection logic is designed for active-passive broker pairs, but it doesn't failover to another active broker. See related https://issues.apache.org/jira/browse/ARTEMIS-4251[RFE].
+** During startup the connections are created to currently running brokers only, but then the retries for a connection target its original broker only.
+** During startup the connection fails if none of the listed brokers are available. Use `initialConnectAttempts=-1` for unlimited retry.
+* The Core client can automatically receive information of other endpoints in the broker cluster. In this case it's enough to add only the hostname of one broker in the URL, it will propagate the hostnames of the other brokers in the cluster. This is not useful on OpenShift where the broker doesn't know the hostname of the _Routes_ or _Services_ where the client can actually access the broker. To turn off this discovery feature add `useTopologyForLoadBalancing=false`, so the client will only try the hostnames listed in the connection URL.  

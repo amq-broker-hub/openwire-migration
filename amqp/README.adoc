@@ -119,9 +119,9 @@ AMQP protocol requires a different broker URL than Openwire. See URL format and 
 
 The AMQP JMS client supports https://qpid.apache.org/releases/qpid-jms-1.8.0/docs/index.html#failover-configuration-options[`failover:()`] similarly to OpenWire:
 
-* The client automatically reconnects to an alive broker, no exception reaches the application level. 
+* The client automatically reconnects to an alive broker, no _Exception_ reaches the application code level. 
 * The client tries to connect to the listed brokers in the given order. Use `failover.randomize=true` to connect to brokers randomly.
-* Reconnection is tried forever by default. This can be changed with the `failover.maxReconnectAttempts` parameter.
+* Reconnection is tried forever (`-1`) by default. This can be changed with the `failover.maxReconnectAttempts` parameter.
 ** The first connection during startup is also retried forever. This can be changed with `failover.startupMaxReconnectAttempts`, for example if we want to see the app crashing in case of misconfiguration. 
 * It's recommended to use `failover.amqpOpenServerListAction=IGNORE` so the client won't receive information from other - not accessible - endpoints in the broker cluster and it only connects to hosts and ports listed in the url.
 
