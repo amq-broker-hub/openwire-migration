@@ -11,8 +11,9 @@ Pick one of the alternative protocols supported by Artemis message broker:
 
 Quick pick:
 
-* JBoss EAP apps -> use CORE
+* JBoss EAP apps -> CORE is built-in, but can use AMQP too
 * Java apps with XA transactions -> use CORE
+* Wants to use automatic broker failover feature -> use AMQP
 * .NET apps -> use AMQP
 * Prefer AMQP over CORE because that's a standard protocol
 

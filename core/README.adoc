@@ -58,6 +58,8 @@ JBoss EAP 7 supports Core messaging connections out of the box, see: https://acc
 
 The related `artemis-ra` jar file can also be found in AMQ broker's `lib` directory.
 
+Of course we can also use the AMQP client with JBoss EAP, but we need to add the client jar to the app and create the ConnectionFactory in our app code.
+
 === Code
 
 The CORE client supports JMS2 API, which is backward compatible with JMS1.1. Create `ConnectionFactory` as:
