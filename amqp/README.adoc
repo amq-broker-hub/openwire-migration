@@ -86,6 +86,16 @@ The AMQP client supports JMS2 API, which is backward compatible with JMS1.1. Cre
 javax.jms.ConnectionFactory connFactory = new org.apache.qpid.jms.JmsConnectionFactory(brokerUrl);
 ```
 
+With JMS API Destinations should be created with `session.createQueue("myqueue")` and `session.createTopic("mytopic")`, but if you create Destination objects directly in your code use:
+
+```
+// queue
+new org.apache.qpid.jms.JmsQueue("myqueue");
+
+// topic
+new org.apache.qpid.jms.JmsTopic("mytopic");
+```
+
 == URL
 
 AMQP protocol requires a different broker URL than Openwire. See URL format and https://qpid.apache.org/releases/qpid-jms-1.8.0/docs/index.html#jms-configuration-options[parameters]. Examples:

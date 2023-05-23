@@ -68,6 +68,16 @@ The CORE client supports JMS2 API, which is backward compatible with JMS1.1. Cre
 javax.jms.ConnectionFactory connFactory = new org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory(brokerUrl);
 ```
 
+With JMS API Destinations should be created with `session.createQueue("myqueue")` and `session.createTopic("mytopic")`, but if you create Destination objects directly in your code use:
+
+```
+// queue
+new org.apache.activemq.artemis.jms.client.ActiveMQQueue("myqueue");
+
+// topic
+new org.apache.activemq.artemis.jms.client.ActiveMQTopic("mytopic");
+```
+
 == URL
 
 CORE protocol URL format and parameters: https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11/html-single/using_the_amq_core_protocol_jms_client/index#configuration_options
