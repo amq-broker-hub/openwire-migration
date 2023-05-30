@@ -20,64 +20,6 @@ Core clients:
 * AMQ Core Protocol JMS Client
 * AMQ Clients Resource Adapter for JBoss EAP
 
-
-
-== Java client
-
-https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11/html-single/using_the_amq_core_protocol_jms_client/index[Core JMS Client] Red Hat builds:
-
-* JMS2 API (recommended): https://maven.repository.redhat.com/earlyaccess/all/org/apache/activemq/artemis-jms-client/[`artemis-jms-client`]
-* Jakarta API (for latest runtimes): https://maven.repository.redhat.com/earlyaccess/all/org/apache/activemq/artemis-jakarta-client/[`artemis-jakarta-client`]
-* Non-JMS compliant client: https://maven.repository.redhat.com/earlyaccess/all/org/apache/activemq/artemis-core-client/[`artemis-core-client`]
-
-GitHub: https://github.com/rh-messaging/activemq-artemis/tree/amq-broker-7.11/artemis-jms-client
-
-To use the Red Hat build of the JMS client add dependency to _pom.xml_ (in a non-JBossEAP apps):
-
-```
-<dependency>
-  <groupId>org.apache.activemq</groupId>
-  <artifactId>artemis-jms-client</artifactId>
-  <version>2.18.0.redhat-00021</version>
-</dependency>
-```
-
-Also make sure that _JMS 2.0_ API spec is used as dependency (instead of _JMS 1.1_):
-
-```
-<dependency>
-    <groupId>org.apache.geronimo.specs</groupId>
-    <artifactId>geronimo-jms_2.0_spec</artifactId>
-    <version>1.0.0.alpha-2-redhat-2</version>
-</dependency>
-```
-
-=== JBoss EAP 
-
-JBoss EAP 7 supports Core messaging connections out of the box, see: https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.4/html-single/configuring_messaging/index#about_integrated_artemis_resource_adapter
-
-The related `artemis-ra` jar file can also be found in AMQ broker's `lib` directory.
-
-Of course we can also use the AMQP client with JBoss EAP, but we need to add the client jar to the app and create the ConnectionFactory in our app code.
-
-=== Code
-
-The CORE client supports JMS2 API, which is backward compatible with JMS1.1. Create `ConnectionFactory` as:
-
-```
-javax.jms.ConnectionFactory connFactory = new org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory(brokerUrl);
-```
-
-With JMS API Destinations should be created with `session.createQueue("myqueue")` and `session.createTopic("mytopic")`, but if you create Destination objects directly in your code use:
-
-```
-// queue
-new org.apache.activemq.artemis.jms.client.ActiveMQQueue("myqueue");
-
-// topic
-new org.apache.activemq.artemis.jms.client.ActiveMQTopic("mytopic");
-```
-
 == URL
 
 CORE protocol URL format and parameters: https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11/html-single/using_the_amq_core_protocol_jms_client/index#configuration_options
@@ -123,3 +65,89 @@ Core client's automatic reconnection mechanism is different than OpenWire's:
 ** During startup the connections are created to currently running brokers only, but then the retries for a connection target its original broker only.
 ** During startup the connection fails if none of the listed brokers are available. Use `initialConnectAttempts=-1` for unlimited retry.
 * The Core client can automatically receive information of other endpoints in the broker cluster. In this case it's enough to add only the hostname of one broker in the URL, it will propagate the hostnames of the other brokers in the cluster. This is not useful on OpenShift where the broker doesn't know the hostname of the _Routes_ or _Services_ where the client can actually access the broker. To turn off this discovery feature add `useTopologyForLoadBalancing=false`, so the client will only try the hostnames listed in the connection URL.  
+
+== Java client
+
+https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11/html-single/using_the_amq_core_protocol_jms_client/index[Core JMS Client] Red Hat builds:
+
+* JMS2 API (recommended): https://maven.repository.redhat.com/earlyaccess/all/org/apache/activemq/artemis-jms-client/[`artemis-jms-client`]
+* Jakarta API (for latest runtimes): https://maven.repository.redhat.com/earlyaccess/all/org/apache/activemq/artemis-jakarta-client/[`artemis-jakarta-client`]
+* Non-JMS compliant client: https://maven.repository.redhat.com/earlyaccess/all/org/apache/activemq/artemis-core-client/[`artemis-core-client`]
+
+GitHub: https://github.com/rh-messaging/activemq-artemis/tree/amq-broker-7.11/artemis-jms-client
+
+To use the Red Hat build of the JMS client add dependency to _pom.xml_ (in a non-JBossEAP apps):
+
+```
+<dependency>
+  <groupId>org.apache.activemq</groupId>
+  <artifactId>artemis-jms-client</artifactId>
+  <version>2.18.0.redhat-00021</version>
+</dependency>
+```
+
+Also make sure that _JMS 2.0_ API spec is used as dependency (instead of _JMS 1.1_):
+
+```
+<dependency>
+    <groupId>org.apache.geronimo.specs</groupId>
+    <artifactId>geronimo-jms_2.0_spec</artifactId>
+    <version>1.0.0.alpha-2-redhat-2</version>
+</dependency>
+```
+
+=== JBoss EAP 
+
+JBoss EAP 7 supports Core messaging connections out of the box, see: https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.4/html-single/configuring_messaging/index#jakarta_messaging_resources_configuration_for_a_remote_Artemis-based_broker
+
+In `standalone.xml` we need something like this to create a _ConnectionFactory_ we can lookup from JNDI by entry name:
+
+[source,xml]
+----
+<server>
+    <extensions>
+        <extension module="org.wildfly.extension.messaging-activemq"/> ...
+    </extensions>
+
+    <profile>
+        <subsystem xmlns="urn:jboss:domain:messaging-activemq:13.0">
+            <remote-connector name="remote-amq" socket-binding="messaging-remote">
+                <param name="ssl-enabled" value="true"/>
+                <param name="trust-store-password" value="changeit"/>
+                <param name="trust-store-path" value="/etc/mytruststore.ts"/>
+            </remote-connector>
+            <pooled-connection-factory name="activemq-ra-remote" entries="java:/jms/remote-amq/JmsConnectionFactory" connectors="remote-amq" 
+              min-pool-size="1" max-pool-size="10" transaction="xa" 
+              user="${env.AMQ_USER}" password="${env.AMQ_PASSWORD}" />
+        </subsystem> ...
+    </profile>
+    
+    <socket-binding-group name="standard-sockets">
+        <outbound-socket-binding name="messaging-remote">
+            <remote-destination host="amq-broker-host..." port="61617"/>
+        </outbound-socket-binding> ...
+    </socket-binding-group>
+</server>
+----
+
+// The related `artemis-ra` jar file can also be found in AMQ broker's `lib` directory.
+
+Of course we can also use the AMQP client with JBoss EAP, but we need to add the client jar to the app and create the ConnectionFactory in our app code.
+
+=== Code
+
+The CORE client supports JMS2 API, which is backward compatible with JMS1.1. Create `ConnectionFactory` as:
+
+```
+javax.jms.ConnectionFactory connFactory = new org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory(brokerUrl);
+```
+
+With JMS API Destinations should be created with `session.createQueue("myqueue")` and `session.createTopic("mytopic")`, but if you create Destination objects directly in your code use:
+
+```
+// queue
+new org.apache.activemq.artemis.jms.client.ActiveMQQueue("myqueue");
+
+// topic
+new org.apache.activemq.artemis.jms.client.ActiveMQTopic("mytopic");
+```
