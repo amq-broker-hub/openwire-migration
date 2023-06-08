@@ -2,6 +2,8 @@
 
 OpenWire is a legacy ActiveMQ wire protocol which is now deprecated in Red Hat AMQ 7 (ActiveMQ Artemis). Migrating the existing client applications to an alternative protocol requires code changes are regression testing.
 
+The Openwire client jar file has a name like `activemq-client.jar`, or in maven _pom.xml_ look for `<groupId>org.apache.activemq</groupId> <artifactId>activemq-client</artifactId>`.
+
 == Protocols
 
 Pick one of the alternative protocols supported by Artemis message broker:
