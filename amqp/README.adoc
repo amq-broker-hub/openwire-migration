@@ -142,6 +142,11 @@ The https://qpid.apache.org/releases/qpid-proton-dotnet-1.0.0-M9[Qpid Proton Dot
 
 === Code
 
+Examples in github repo: 
+
+* Small apps: https://github.com/apache/qpid-proton-dotnet/tree/main/examples
+* Unit tests: https://github.com/apache/qpid-proton-dotnet/tree/main/test/Proton.Client.Tests/Client/Implementation 
+
 Send message to a Queue (address with _anycast_):
 
 [source,csharp]
