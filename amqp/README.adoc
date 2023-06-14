@@ -140,3 +140,28 @@ new org.apache.qpid.jms.JmsTopic("mytopic");
 
 The https://qpid.apache.org/releases/qpid-proton-dotnet-1.0.0-M9[Qpid Proton DotNet] client can be used to connect to Artemis with AMQP protocol from .NET (see https://github.com/apache/qpid-proton-dotnet[github] for examples).
 
+=== Code
+
+Send message to a Queue (address with _anycast_):
+
+[source,csharp]
+----
+IClient client = IClient.Create();
+
+ConnectionOptions options = new ConnectionOptions();
+options.User = "admin";
+options.Password = "password";
+// SSL connection
+options.SslOptions.SslEnabled = true;
+// options.SslOptions.VerifyHost = false;
+using IConnection connection = client.Connect("broker.hostname.mycompany.com", 61617, options);
+
+IMessage<String> message = IMessage<String>.Create("Hello World");
+message.Durable=true;
+
+SenderOptions senderOptions = new SenderOptions();
+// Send as "anycast" (queue) instead "multicast" (topic)
+senderOptions.TargetOptions.Capabilities = new string[] { "queue" };
+using ISender sender = connection.OpenSender("myqueue",senderOptions);
+sender.Send(message);
+----
