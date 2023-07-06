@@ -136,11 +136,16 @@ new org.apache.qpid.jms.JmsQueue("myqueue");
 new org.apache.qpid.jms.JmsTopic("mytopic");
 ```
 
-== .NET client
+== .NET clients
 
-The https://qpid.apache.org/releases/qpid-proton-dotnet-1.0.0-M9[Qpid Proton DotNet] client can be used to connect to Artemis with AMQP protocol from .NET (see https://github.com/apache/qpid-proton-dotnet[github] for examples).
+=== Qpid Proton DotNet client
 
-=== Code
+The https://qpid.apache.org/releases/qpid-proton-dotnet-1.0.0-M9[Qpid Proton DotNet] client can be used to connect to Artemis with AMQP protocol from .NET (see https://github.com/apache/qpid-proton-dotnet[github] for examples). 
+
+* Client requires .NET v5.0+.
+
+
+==== Code
 
 Examples in github repo: 
 
@@ -170,3 +175,11 @@ senderOptions.TargetOptions.Capabilities = new string[] { "queue" };
 using ISender sender = connection.OpenSender("myqueue",senderOptions);
 sender.Send(message);
 ----
+
+=== AMQP.Net Lite client
+
+An alternative option is to use the _AMQ .NET_ library which is based on _AMQP.Net Lite_ and is part of _Red Hat AMQ Clients v2.11_. 
+
+* Docs: https://access.redhat.com/documentation/en-us/red_hat_amq_clients/2.11/html-single/using_the_amq_.net_client/
+* Client requires .NET v4.7+: https://access.redhat.com/articles/2791941#net_details 
+* Download: https://access.redhat.com/jbossnetwork/restricted/listSoftware.html?downloadType=distributions&product=jboss.amq.clients&version=2.11.0
