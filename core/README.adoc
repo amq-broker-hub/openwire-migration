@@ -46,7 +46,7 @@ CORE protocol URL format and parameters: https://access.redhat.com/documentation
 
 * Multiple brokers - OpenShift Routes.
 +
-`(amqps://route-0.apps.mycluster.mycompany.com:443,amqps://route-1.apps.mycluster.mycompany.com:443)?reconnectAttempts=-1&useTopologyForLoadBalancing=false`
+`(tcp://route-0.apps.mycluster.mycompany.com:443,tcp://route-1.apps.mycluster.mycompany.com:443)?reconnectAttempts=-1&useTopologyForLoadBalancing=false`
 +
 
 
