@@ -29,46 +29,6 @@ AMQP clients:
 * AMQ JavaScript Client (Rhea)
 * AMQ Ruby Client (Qpid Proton)
 
-
-== URL
-
-AMQP protocol requires a different broker URL than Openwire. See URL format and https://qpid.apache.org/releases/qpid-jms-1.8.0/docs/index.html#jms-configuration-options[parameters]. Examples:
-
-* Simple non-TLS
-+
-`amqp://host:5672`
-
-* TLS enabled server - trust every certificate
-+
-`amqps://host:61617?transport.verifyHost=false&transport.trustAll=true`
-
-* TLS enabled server - truststore
-+
-`amqps://host:61617?transport.trustStoreLocation=./client.ts&transport.trustStorePassword=changeit`
-
-* Prefetch size
-+
-`amqp://localhost:5672?jms.prefetchPolicy.all=10`
-
-* Failover - OpenShift Routes
-+
-`failover:(amqps://route-0.apps.mycluster.mycompany.com:443,amqps://route-1.apps.mycluster.mycompany.com:443)?failover.startupMaxReconnectAttempts=15&failover.amqpOpenServerListAction=IGNORE`
-
-* Failover - nested parameters
-+
-`failover:(amqps://host-0:61617,amqps://host-1:61617)?jms.prefetchPolicy.all=10&failover.nested.transport.trustStoreLocation=./client.ts&failover.nested.transport.trustStorePassword=changeit`
-
-
-== Failover
-
-The AMQP JMS client supports https://qpid.apache.org/releases/qpid-jms-1.8.0/docs/index.html#failover-configuration-options[`failover:()`] similarly to OpenWire:
-
-* The client automatically reconnects to an alive broker, no _Exception_ reaches the application code level. 
-* The client tries to connect to the listed brokers in the given order. Use `failover.randomize=true` to connect to brokers randomly.
-* Reconnection is tried forever (`-1`) by default. This can be changed with the `failover.maxReconnectAttempts` parameter.
-** The first connection during startup is also retried forever. This can be changed with `failover.startupMaxReconnectAttempts`, for example if we want to see the app crashing in case of misconfiguration. 
-* It's recommended to use `failover.amqpOpenServerListAction=IGNORE` so the client won't receive information from other - not accessible - endpoints in the broker cluster and it only connects to hosts and ports listed in the url.
-
 == Java client
 
 https://qpid.apache.org/components/jms/index.html[Qpid JMS client] has two builds. Pick the build based on the framework and other libraries you use in your app:
@@ -117,6 +77,43 @@ Also make sure that JavaEE API specs are added: _JSON_ and _JMS 2.0_ (instead of
     <version>1.0.0.alpha-1-redhat-1</version>
 </dependency>
 ```
+=== URL
+
+AMQP protocol requires a different broker URL than Openwire. See URL format and https://qpid.apache.org/releases/qpid-jms-1.8.0/docs/index.html#jms-configuration-options[parameters]. Examples:
+
+* Simple non-TLS
++
+`amqp://host:5672`
+
+* TLS enabled server - trust every certificate
++
+`amqps://host:61617?transport.verifyHost=false&transport.trustAll=true`
+
+* TLS enabled server - truststore
++
+`amqps://host:61617?transport.trustStoreLocation=./client.ts&transport.trustStorePassword=changeit`
+
+* Prefetch size
++
+`amqp://localhost:5672?jms.prefetchPolicy.all=10`
+
+* Failover - OpenShift Routes
++
+`failover:(amqps://route-0.apps.mycluster.mycompany.com:443,amqps://route-1.apps.mycluster.mycompany.com:443)?failover.startupMaxReconnectAttempts=15&failover.amqpOpenServerListAction=IGNORE`
+
+* Failover - nested parameters
++
+`failover:(amqps://host-0:61617,amqps://host-1:61617)?jms.prefetchPolicy.all=10&failover.nested.transport.trustStoreLocation=./client.ts&failover.nested.transport.trustStorePassword=changeit`
+
+=== Failover
+
+The AMQP JMS client supports https://qpid.apache.org/releases/qpid-jms-1.8.0/docs/index.html#failover-configuration-options[`failover:()`] similarly to OpenWire:
+
+* The client automatically reconnects to an alive broker, no _Exception_ reaches the application code level. 
+* The client tries to connect to the listed brokers in the given order. Use `failover.randomize=true` to connect to brokers randomly.
+* Reconnection is tried forever (`-1`) by default. This can be changed with the `failover.maxReconnectAttempts` parameter.
+** The first connection during startup is also retried forever. This can be changed with `failover.startupMaxReconnectAttempts`, for example if we want to see the app crashing in case of misconfiguration. 
+* It's recommended to use `failover.amqpOpenServerListAction=IGNORE` so the client won't receive information from other - not accessible - endpoints in the broker cluster and it only connects to hosts and ports listed in the url.
 
 === Code
 
@@ -135,6 +132,10 @@ new org.apache.qpid.jms.JmsQueue("myqueue");
 // topic
 new org.apache.qpid.jms.JmsTopic("mytopic");
 ```
+
+=== Other
+
+The Openwire client automatically added a _ClientId_ to the connection that included the hostname. The AMQP client by default uses a random UUID like `ID:b99ba0ae-be94-4ded-ac77-5393aef41e71:1`. This can be customized with the `jms.clientIDPrefix` url parameter.
 
 == .NET clients
 

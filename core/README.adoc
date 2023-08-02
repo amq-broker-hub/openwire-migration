@@ -151,3 +151,7 @@ new org.apache.activemq.artemis.jms.client.ActiveMQQueue("myqueue");
 // topic
 new org.apache.activemq.artemis.jms.client.ActiveMQTopic("mytopic");
 ```
+
+=== Other
+
+The Openwire client automatically added a _ClientId_ to the connection that included the hostname. The CORE client leaves this parameter empty and setting a _clientId_ in the _ConnectionFactory_ limits using only one connection as this value must be unique. Related enhancement request: https://issues.redhat.com/browse/ENTMQBR-8252
